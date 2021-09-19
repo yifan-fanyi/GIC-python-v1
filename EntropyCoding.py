@@ -6,6 +6,7 @@ from BinaryTree import BinaryTree
 class EntropyCoding():
     def __init__(self, par):
         self.par = par
+        self.bpp = 0.
         self.EC_list = {}
 
     def idx_select(self, label, idx=None):
@@ -54,6 +55,7 @@ class EntropyCoding():
         return self
 
     def encode(self, save, S=1024):
+        self.bpp = 0.
         stream = {'idx':{}, 'label':{}}
         label_list, idx_list = save['label'], save['idx']
         n_img = label_list['hop1'][0].shape[0]
@@ -63,13 +65,17 @@ class EntropyCoding():
             stream['idx']['hop'+str(i)] = st
             print('Hop-%d'%(i))
             print('   save tree:%1.8f'%(len(st)/(n_img*S**2)))
+            self.bpp += len(st)/(n_img*S**2)
             tmp_st = [self.EC_list['hop'+str(i)][0].encode(label[0])]
             print('  Level-0 Huffman %1.8f bpp'%((len(tmp_st[-1])) / (n_img*S**2)))
+            self.bpp += len(tmp_st[-1]) / (n_img*S**2)
             for j in range(1, len(self.par['win']['hop'+str(i)])):
                 st = self.EC_list['hop'+str(i)][j].encode(self.idx_select(label[j], idx[j-1]))
                 tmp_st.append(st)
                 print('  Level-%d Huffman %1.8f bpp'%(j, len(st)/(n_img*S**2)))
+                self.bpp += len(st)/(n_img*S**2)
             stream['label']['hop'+str(i)] = tmp_st
+        print('Bit rate %1.6f'%self.bpp)
         return stream
 
     def decode(self, stream):

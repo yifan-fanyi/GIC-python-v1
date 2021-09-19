@@ -117,9 +117,10 @@ class myKMeans():
         return self
 
     def Cpredict(self, X):
-        dis = euclidean_distances(X, self.cluster_centers_)
-        pred = np.argmin(dis, axis=1)
-        return pred.reshape(-1, 1)
+        index = faiss.IndexFlatL2(self.cluster_centers_.shape[1]) 
+        index.add(self.cluster_centers_)             
+        D, I = index.search(X, 1)
+        return I
 
     def predict(self, X):
         S = (list)(X.shape)

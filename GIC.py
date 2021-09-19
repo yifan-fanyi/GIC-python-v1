@@ -47,6 +47,16 @@ class GIC():
         iY = self.MBMBVQ.decode(save)
         return iY
 
+    # return pickleable obj
+    def save(self):
+        for k in self.MBMBVQ.km.keys():
+            km = self.MBMBVQ.km[k]
+            for i in km.KM:
+                i.KM.KM = None
+                i.KM.saveObj=False
+        return self
+   
+
 if __name__ == "__main__":
     with open('./test_data/test_par1.json', 'r') as f:
         par = json.load(f)
