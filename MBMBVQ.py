@@ -10,7 +10,7 @@ from BinaryTree import BinaryTree
 
 class PCAKM():
     def __init__(self, n_cluster, n_components=None, gpu=False):
-        self.n_components = None
+        self.n_components = n_components
         self.KM = myKMeans(n_clusters=n_cluster, fast=True, gpu=gpu, n_threads=8, saveObj=True)
         
     
